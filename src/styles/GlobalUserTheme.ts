@@ -1,5 +1,6 @@
 import React from "react";
 
+/** Not currently used or working */
 const theme = {
     palette: {
         primary: {

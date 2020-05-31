@@ -42,6 +42,8 @@
         "spaced-comment": "off",
         "no-underscore-dangle": "off",
         "strict": "off",
+        "linebreak-style": 0,
+        "no-restricted-syntax": 0,
         "import/newline-after-import": "off",
         "import/no-unresolved": "off",
         "no-console": "off",

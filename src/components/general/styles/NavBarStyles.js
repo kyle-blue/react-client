@@ -17,7 +17,7 @@ export const Button = styled(MuiButton)`
 `;
 
 export const Wrapper = styled.div`
-    position: absolute;
+    position: relative;
     z-index: 9999;
     display: flex;
     padding: 0 20%;
@@ -36,13 +36,6 @@ export const Container = styled.div`
 export const Spacer = styled.div`
     flex: 1;
     height: 100%;
-`;
-
-
-export const Logo = styled.img`
-    position: relative;
-    height: 100%;
-    margin-right: 2rem;
 `;
 
 export const LogoText = styled.h1`
