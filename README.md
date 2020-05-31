@@ -1,0 +1,3 @@
+# react_client
+
+The React client for the Nodejs server (which is a client to the mql server). I know... It's a little confusing... 
