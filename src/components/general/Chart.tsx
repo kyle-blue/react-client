@@ -13,11 +13,16 @@ function Chart(props: Props): React.ReactElement {
     const chartRef = useRef(null);
     useEffect(() => {
         //TODO: pass args to plotter for EMA etc.
-        setGraph(new DyGraph(chartRef.current, [[new Date(), 0, 0, 0, 0]], { labels: ["time", "open", "high", "low", "close"], digitsAfterDecimal: 5, plotter: (e) => { OHLCPlotter(e, "Hell", "poo"); } }));
+        setGraph(new DyGraph(chartRef.current, [[new Date(), 0, 0, 0, 0]],
+            {
+                labels: ["time", "open", "high", "low", "close"],
+                digitsAfterDecimal: 5,
+                plotter: (e) => { OHLCPlotter(e, "Hell", "poo"); },
+            }));
     }, []);
 
     const update = () => {
-        axios.get("http://localhost:8081/api/v1/ohlc?symbol=AUDUSDp&interval=15%20SECOND").then((val) => {
+        axios.get("http://localhost:8081/api/v1/ohlc?symbol=EURUSDp&interval=5%20SECOND").then((val) => {
             if (graph) {
                 let data = [];
                 for (const ohlc of val.data) {
@@ -27,7 +32,7 @@ function Chart(props: Props): React.ReactElement {
                     (graph as DyGraph).updateOptions({ file: data });
                 }
             }
-        }).catch(() => { }).finally(() => setTimeout(update, 100));
+        }).catch(() => { }).finally(() => setTimeout(update, 50));
     };
 
     setTimeout(update, 100);
