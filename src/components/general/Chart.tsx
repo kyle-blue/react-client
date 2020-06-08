@@ -5,7 +5,16 @@ import { ThemeContext, ThemeType } from "../../styles/GlobalUserTheme";
 import { ChartContainer } from "./styles/ChartStyles";
 import { OHLCPlotter } from "./OHLCPlotter";
 
+const TIME_OFFSET = 0;
+const OPEN_OFFSET = 1;
+const HIGH_OFFSET = 2;
+const LOW_OFFSET = 3;
+const CLOSE_OFFSET = 4;
+const VOLUME_OFFSET = 5;
 
+interface Props { }
+
+let graphData = [];
 function Chart(props: Props): React.ReactElement {
     const [ohlcs, setOHLCs] = useState([]);
     const [forceUpdateVal, forceUpdate] = useState(false);
@@ -22,14 +31,25 @@ function Chart(props: Props): React.ReactElement {
     }, []);
 
     const update = () => {
-        axios.get("http://localhost:8081/api/v1/ohlc?symbol=EURUSDp&interval=5%20SECOND").then((val) => {
+        let utcString;
+        if (graphData.length > 0) {
+            utcString = (graphData[graphData.length - 1][0] as Date).toUTCString().replace(" ", "%20");
+        } else {
+            utcString = new Date(1980, 1, 1).toUTCString().replace(" ", "%20");
+        }
+        axios.get(`http://localhost:8081/api/v1/ohlc?symbol=EURUSD&interval=1%20MINUTE&from=${utcString}`).then((val) => {
             if (graph) {
-                let data = [];
-                for (const ohlc of val.data) {
-                    data.push([new Date(ohlc.time), ohlc.open, ohlc.high, ohlc.low, ohlc.close]);
+                /** 0 is time, 1 is open, 2 is close etc. //TODO: make documentation for this */
+                const { data } = val;
+                for (let i = 0; i < data.length; i += 6) { // There are 6 attributes, TOHLCV
+                    if (graphData.length > 0 && (graphData[graphData.length - 1][0] as Date).getTime() === data[i]) {
+                        graphData[graphData.length - 1] = [graphData[graphData.length - 1][0], data[i + 1], data[i + 2], data[i + 3], data[i + 4]];
+                    } else {
+                        graphData.push([new Date(data[i]), data[i + 1], data[i + 2], data[i + 3], data[i + 4]]);
+                    }
                 }
-                if (data[0]) {
-                    (graph as DyGraph).updateOptions({ file: data });
+                if (graphData[0]) {
+                    (graph as DyGraph).updateOptions({ file: graphData });
                 }
             }
         }).catch(() => { }).finally(() => setTimeout(update, 50));
